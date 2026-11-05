@@ -58,7 +58,17 @@ public class PrestamosController : ControllerBase
         prestado.EsRenovable = prest.EsRenovable;
         return NoContent();
     }
-
+    [HttpDelete("{id:int}")]
+    public ActionResult Delete(int id)
+    {
+        var prestado = cuenta.FirstOrDefault(x => x.Id == id);
+        if(prestado is null)
+        {
+            return NotFound();
+        }
+        cuenta.Remove(prestado);
+        return NoContent();
+    }
     
     
 }
