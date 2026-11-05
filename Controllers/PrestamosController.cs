@@ -29,6 +29,20 @@ public class PrestamosController : ControllerBase
             }
             return Ok(prest);
     }
-
+    [HttpPost]
+    public ActionResult<Prestamos> Create ([FromBody] Prestamos prest)
+    {
+        int nid = 0;
+        if(cuenta.Count > 0)
+        {
+            nid = cuenta.Max(x =>x.Id) +1;
+        }
+        prest.Id = nid;
+        prest.EstadoPrestamo = Estado.Activo;
+        prest.FechaPrestamo = DateTime.Now;
+        cuenta.Add(prest);
+        return CreatedAtAction(nameof(GetById),new { id = prest.Id} ,prest);
+    }
+    
     
 }
