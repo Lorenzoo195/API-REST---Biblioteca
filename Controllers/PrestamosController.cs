@@ -43,6 +43,22 @@ public class PrestamosController : ControllerBase
         cuenta.Add(prest);
         return CreatedAtAction(nameof(GetById),new { id = prest.Id} ,prest);
     }
+    [HttpPut("{id:int}")]
+    public ActionResult Update([FromBody] Prestamos prest, int id)
+    {
+        var prestado = cuenta.FirstOrDefault(x => x.Id == id);
+        if(prestado is null)
+        {
+            return NoContent();
+        }
+        prestado.NombreLector = prest.NombreLector;
+        prestado.TituloLibro = prest.TituloLibro;
+        prestado.FechaPrestamo = prest.FechaPrestamo;
+        prestado.DuracionDias = prest.DuracionDias;
+        prestado.EsRenovable = prest.EsRenovable;
+        return NoContent();
+    }
+
     
     
 }
