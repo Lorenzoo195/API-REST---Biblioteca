@@ -9,9 +9,9 @@ public class PrestamosController : ControllerBase
 {
     private static readonly List<Prestamos> cuenta = new()
     {
-        new Prestamos { Id = 1, NombreLector = "Jose", TituloLibro = "Rey Leon", FechaPrestamo = DateTime.Now, DuracionDias = 2, EsRenovable = true, EstadoPrestamo = Estado.Activo},
-        new Prestamos { Id = 2, NombreLector = "Jose", TituloLibro = "Rey Leon", FechaPrestamo = DateTime.Now, DuracionDias = 2, EsRenovable = true, EstadoPrestamo = Estado.Devuelto},
-        new Prestamos { Id = 3, NombreLector = "Jose", TituloLibro = "Rey Leon", FechaPrestamo = DateTime.Now, DuracionDias = 2, EsRenovable = true, EstadoPrestamo = Estado.Activo}
+        new Prestamos { Id = 1, NombreLector = "Jose", TituloLibro = "Rey Leon", FechaPrestamo = DateTime.Now.AddHours(-2), DuracionDias = 2, EsRenovable = true, EstadoPrestamo = Estado.Activo},
+        new Prestamos { Id = 2, NombreLector = "Pepe", TituloLibro = "Cars", FechaPrestamo = DateTime.Now.AddHours(-1), DuracionDias = 2, EsRenovable = true, EstadoPrestamo = Estado.Devuelto},
+        new Prestamos { Id = 3, NombreLector = "Mario", TituloLibro = "Toy Story", FechaPrestamo = DateTime.Now, DuracionDias = 2, EsRenovable = true, EstadoPrestamo = Estado.Activo}
     };
 
     [HttpGet]
@@ -69,6 +69,45 @@ public class PrestamosController : ControllerBase
         cuenta.Remove(prestado);
         return NoContent();
     }
-    
-    
+    [HttpPut("{id:int}/devolver")]
+    public ActionResult Devolver(int id)
+    {
+        var prestado = cuenta.FirstOrDefault(x => x.Id == id);
+        if(prestado is null)
+        {
+            return NoContent();
+        }
+        if(prestado.EstadoPrestamo == Estado.Activo)
+        {
+            return Conflict();
+        }
+        prestado.EstadoPrestamo = Estado.Activo;
+        return NoContent();
+    }
+    [HttpGet("recientes")]
+    public ActionResult<IEnumerable<Prestamos>> GetRecientes([FromQuery] int cantidad = 5)
+    {
+        if (cantidad <= 0)
+      {
+         return BadRequest("La cantidad deve ser mayor que cero. ");
+      }
+      var resultado = cuenta
+      .OrderByDescending(x => x.FechaPrestamo)
+      .Take(cantidad)
+      .ToList();
+
+      return Ok(resultado);
+    }
+    [HttpGet("buscar")]
+    public ActionResult<Prestamos> Buscar([FromQuery] string lector)
+    {
+        if (string.IsNullOrWhiteSpace(lector))
+        {
+            return Ok(new List<Prestamos>());
+        }
+        var resultado = cuenta
+        .Where(x =>x.NombreLector.Contains(lector, StringComparison.OrdinalIgnoreCase))
+        .ToList();
+        return Ok(resultado);
+    }
 }
