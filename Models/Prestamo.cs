@@ -10,8 +10,7 @@ public class Prestamos
     public bool EsRenovable {get;set;}
     public Estado EstadoPrestamo {get;set;}
     public Prestamos() {}
-    public Prestamos(int id, string nombrelector, string titulolibro, DateTime fechaprestamo
-    , int duraciondias, bool esrenovable, Estado estadoprestamo)
+    public Prestamos(int id, string nombrelector, string titulolibro, DateTime fechaprestamo, int duraciondias, bool esrenovable, Estado estadoprestamo)
     {
         Id = id;
         NombreLector = nombrelector;
